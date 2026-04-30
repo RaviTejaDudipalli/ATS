@@ -3,8 +3,22 @@
  * surface forms. Keys are lowercase. Surface forms are matched after the
  * same normalization pipeline used for resumes (see normalize.js).
  *
- * Adding entries here is the cheapest way to improve recall without ML.
+ * Two ways to "canonicalize" a surface form:
+ *
+ *   - canonicalize(s)            → exact lookup in the synonym table.
+ *                                   Returns the input lowercased if no hit.
+ *
+ *   - fuzzyCanonicalize(s, opt)  → exact-then-similarity. Falls back to
+ *                                   character n-gram cosine similarity
+ *                                   above a configurable threshold so
+ *                                   typos / minor variants ("kuberntes",
+ *                                   "tailwindscss") still snap to the
+ *                                   right canonical key.
+ *
+ * Adding entries to RAW remains the cheapest way to improve recall.
  */
+
+const { ngramSimilarity } = require('./embeddings');
 
 const RAW = {
   javascript: ['javascript', 'js', 'es6', 'es2015', 'ecmascript', 'vanilla js'],
@@ -84,6 +98,11 @@ for (const [canonical, forms] of Object.entries(RAW)) {
   }
 }
 
+// Surface forms sorted longest-first so multi-word matches win.
+const SURFACE_FORMS_BY_LEN = [...SURFACE_TO_CANONICAL.keys()].sort(
+  (a, b) => b.length - a.length,
+);
+
 function canonicalize(surface) {
   if (!surface) return null;
   const k = surface.toLowerCase().trim();
@@ -91,7 +110,44 @@ function canonicalize(surface) {
 }
 
 function knownSurfaceForms() {
-  return [...SURFACE_TO_CANONICAL.keys()].sort((a, b) => b.length - a.length);
+  return SURFACE_FORMS_BY_LEN;
 }
 
-module.exports = { canonicalize, knownSurfaceForms, RAW };
+/**
+ * Best-effort canonicalization with similarity fallback.
+ *
+ *   - Exact hit in the synonym table → return canonical.
+ *   - No hit → walk surface forms, pick the closest by char n-gram cosine,
+ *     return the canonical of the winner if similarity ≥ threshold.
+ *   - Below threshold → return the lowercased input (graceful fallback).
+ *
+ * The fallback is bounded by length difference so we don't compare "java"
+ * to "javascript" and get a false positive — different concepts that
+ * happen to share characters.
+ */
+function fuzzyCanonicalize(surface, { threshold = 0.85, maxLenRatio = 1.6 } = {}) {
+  if (!surface) return null;
+  const lower = surface.toLowerCase().trim();
+  const exact = SURFACE_TO_CANONICAL.get(lower);
+  if (exact) return exact;
+
+  let best = { canonical: lower, score: 0, surface: null };
+  for (const form of SURFACE_FORMS_BY_LEN) {
+    // Don't bother comparing wildly different lengths.
+    const r = Math.max(form.length, lower.length) / Math.max(1, Math.min(form.length, lower.length));
+    if (r > maxLenRatio) continue;
+
+    const s = ngramSimilarity(form, lower);
+    if (s > best.score) {
+      best = { canonical: SURFACE_TO_CANONICAL.get(form), score: s, surface: form };
+    }
+  }
+  return best.score >= threshold ? best.canonical : lower;
+}
+
+module.exports = {
+  canonicalize,
+  fuzzyCanonicalize,
+  knownSurfaceForms,
+  RAW,
+};

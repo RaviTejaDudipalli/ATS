@@ -1,14 +1,32 @@
 const { verifyAccessToken } = require('../lib/jwt');
+const { env } = require('../lib/config');
 const { UnauthorizedError, ForbiddenError } = require('../lib/errors');
 
-function authenticate(req, _res, next) {
+/**
+ * Resolve the access token from either source. Cookie wins when both are
+ * present — that's the modern path for browsers; the header path stays
+ * supported for non-browser clients (mobile, scripts, integrations) that
+ * predate the cookie migration.
+ */
+function readAccessToken(req) {
+  const cookie = req.cookies?.[env.ACCESS_COOKIE_NAME];
+  if (cookie) return { token: cookie, source: 'cookie' };
+
   const header = req.headers.authorization || '';
   const [scheme, token] = header.split(' ');
-  if (scheme !== 'Bearer' || !token) {
-    return next(new UnauthorizedError('Missing or invalid Authorization header'));
+  if (scheme === 'Bearer' && token) return { token, source: 'header' };
+
+  return { token: null, source: null };
+}
+
+function authenticate(req, _res, next) {
+  const { token, source } = readAccessToken(req);
+  if (!token) {
+    return next(new UnauthorizedError('Authentication required'));
   }
   try {
     req.user = verifyAccessToken(token);
+    req.authSource = source;
     next();
   } catch {
     next(new UnauthorizedError('Invalid or expired token'));
@@ -24,4 +42,4 @@ function requireRole(...roles) {
   };
 }
 
-module.exports = { authenticate, requireRole };
+module.exports = { authenticate, requireRole, readAccessToken };

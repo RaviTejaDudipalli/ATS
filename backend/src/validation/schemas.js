@@ -62,9 +62,11 @@ const auth = {
     email: z.string().trim().toLowerCase().email().max(254),
     password: z.string().min(1).max(128),
   }),
-  refresh: z.object({
-    refreshToken: z.string().min(20).max(2048),
-  }),
+  // Cookie-based clients send no body. Legacy bearer clients still send
+  // `refreshToken`. Both shapes parse cleanly.
+  refresh: z
+    .object({ refreshToken: z.string().min(20).max(2048).optional() })
+    .partial(),
 };
 
 const job = {

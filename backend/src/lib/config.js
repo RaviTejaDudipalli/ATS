@@ -22,6 +22,27 @@ const schema = z.object({
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
   TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(0),
 
+  // --- Cookie / CSRF settings ---
+  // CSRF_SECRET signs the CSRF token so an attacker can't forge a value that
+  // matches the double-submit cookie. Falls back to JWT_SECRET in dev only.
+  CSRF_SECRET: z
+    .string()
+    .min(16, 'CSRF_SECRET must be at least 16 characters')
+    .optional(),
+  // SameSite=Lax is the right default for same-site (different-port) dev.
+  // Use 'none' (with secure cookies) when frontend and backend are on
+  // different registrable domains.
+  COOKIE_SAMESITE: z.enum(['lax', 'strict', 'none']).default('lax'),
+  // Force the Secure flag. Auto-enabled in production; can be forced on in
+  // staging behind HTTPS. NEVER turn on without HTTPS or browsers will
+  // reject the cookie silently.
+  COOKIE_SECURE: z
+    .preprocess((v) => (v === undefined ? undefined : v === 'true' || v === true), z.boolean())
+    .optional(),
+  // Optional explicit cookie domain (e.g. `.example.com` to share across
+  // app.example.com and api.example.com). Leave empty for host-only cookies.
+  COOKIE_DOMAIN: z.string().optional(),
+
   RATE_LIMIT_GLOBAL_PER_MIN: z.coerce.number().int().positive().default(300),
   RATE_LIMIT_AUTH_PER_15M: z.coerce.number().int().positive().default(20),
   RATE_LIMIT_UPLOAD_PER_HOUR: z.coerce.number().int().positive().default(20),
@@ -60,5 +81,29 @@ if (!env.JWT_REFRESH_SECRET) {
 
 env.CORS_ORIGINS = env.CORS_ORIGIN.split(',').map((s) => s.trim()).filter(Boolean);
 env.IS_PROD = env.NODE_ENV === 'production';
+
+// Resolve CSRF secret. In production we require an explicit value; in dev we
+// derive one from JWT_SECRET so a fresh checkout still boots.
+if (!env.CSRF_SECRET) {
+  if (env.IS_PROD) {
+    console.error('[config] CSRF_SECRET is required in production');
+    process.exit(1);
+  }
+  env.CSRF_SECRET = env.JWT_SECRET + ':csrf';
+}
+
+// Default Secure cookies on in production; allow opt-in elsewhere.
+if (env.COOKIE_SECURE === undefined) env.COOKIE_SECURE = env.IS_PROD;
+
+// SameSite=None requires Secure. Reject the obviously-broken combo at boot
+// rather than letting browsers silently drop our cookies at runtime.
+if (env.COOKIE_SAMESITE === 'none' && !env.COOKIE_SECURE) {
+  console.error('[config] COOKIE_SAMESITE=none requires COOKIE_SECURE=true');
+  process.exit(1);
+}
+
+env.ACCESS_COOKIE_NAME = 'ats_at';
+env.REFRESH_COOKIE_NAME = 'ats_rt';
+env.CSRF_COOKIE_NAME = 'XSRF-TOKEN';
 
 module.exports = { env };

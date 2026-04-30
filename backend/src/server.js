@@ -15,6 +15,8 @@ const {
   helmetMiddleware,
   globalLimiter,
 } = require('./middleware/security');
+const { cookieMiddleware } = require('./lib/cookies');
+const { csrfProtect } = require('./middleware/csrf');
 const { NotFoundError } = require('./lib/errors');
 
 const authRoutes = require('./routes/auth.routes');
@@ -51,7 +53,28 @@ app.use(
 );
 app.use(express.json({ limit: '1mb' }));         // JSON bodies stay small;
                                                   // resume uploads use multipart
+app.use(cookieMiddleware);                       // populates req.cookies
 app.use(globalLimiter);
+
+// CSRF protection. Mounted *before* routes so every state-changing call is
+// covered. The middleware is a no-op for GET/HEAD/OPTIONS and for callers
+// using `Authorization: Bearer …` (CSRF doesn't apply to non-cookie auth).
+//
+// The login + signup endpoints are allow-listed: the user has no session
+// yet, so there's no double-submit cookie to verify against. Rate limiting
+// + the CAPTCHA layer (when enabled) cover those endpoints instead.
+app.use((req, res, next) => {
+  const path = req.path;
+  if (
+    path === '/api/auth/login' ||
+    path === '/api/auth/signup' ||
+    path === '/api/auth/csrf' ||
+    path === '/api/health'
+  ) {
+    return next();
+  }
+  return csrfProtect(req, res, next);
+});
 
 // --- liveness ---
 app.get('/api/health', (_req, res) =>
