@@ -1,0 +1,190 @@
+// Prisma schema for the Applicant Tracking System.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CANDIDATE
+  RECRUITER
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  DRAFT
+}
+
+enum ApplicationStatus {
+  APPLIED
+  REVIEWING
+  SHORTLISTED
+  INTERVIEW
+  REJECTED
+  HIRED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  candidate     Candidate?
+  recruiter     Recruiter?
+  refreshTokens RefreshToken[]
+
+  @@index([role])
+}
+
+/// Opaque, hashed refresh tokens. The cleartext token never lives in the DB.
+/// Rotated on each refresh; revoked on logout. `replacedById` lets us detect
+/// reuse of an already-rotated token (a strong signal of compromise).
+model RefreshToken {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tokenHash    String   @unique
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  replacedById String?
+
+  userAgent    String?
+  ip           String?
+
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Candidate {
+  id          String        @id @default(cuid())
+  userId      String        @unique
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName    String
+  phone       String?
+  headline    String?
+  linkedinUrl String?
+  githubUrl   String?
+  portfolioUrl String?
+  location    String?
+
+  resume      Resume?
+  applications Application[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Recruiter {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName    String
+  company     String
+  title       String?
+
+  jobs        Job[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Resume {
+  id           String   @id @default(cuid())
+  candidateId  String   @unique
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  fileName     String
+  storagePath  String
+  mimeType     String
+  sizeBytes    Int
+  extractedText String? @db.Text
+
+  // Normalized list of detected skills (comma-separated tokens). Lets us
+  // refresh ATS scores without re-parsing the file.
+  detectedSkills String  @default("")
+
+  uploadedAt   DateTime @default(now())
+}
+
+model Job {
+  id            String        @id @default(cuid())
+  recruiterId   String
+  recruiter     Recruiter     @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+
+  title         String
+  description   String        @db.Text
+  location      String?
+  remote        Boolean       @default(false)
+  type          JobType       @default(FULL_TIME)
+  status        JobStatus     @default(OPEN)
+
+  salaryMin     Int?
+  salaryMax     Int?
+  currency      String        @default("USD")
+
+  // Comma-separated list. Modeled as a string for now to avoid premature
+  // normalization; revisit when we need cross-job skill analytics.
+  skills        String        @default("")
+  minExperience Int?
+
+  applications  Application[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Public listing query path: WHERE status='OPEN' ORDER BY createdAt DESC.
+  @@index([status, createdAt])
+  // Recruiter dashboard: WHERE recruiterId=? ORDER BY createdAt DESC.
+  @@index([recruiterId, createdAt])
+  @@index([type])
+}
+
+model Application {
+  id             String             @id @default(cuid())
+  jobId          String
+  candidateId    String
+
+  job            Job                @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate      Candidate          @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  status         ApplicationStatus  @default(APPLIED)
+  coverLetter    String?            @db.Text
+
+  atsScore       Int                @default(0)
+  scoreBreakdown Json?
+  // null = enqueued/never run; set after the scoring worker finishes.
+  scoredAt       DateTime?
+
+  appliedAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@unique([jobId, candidateId])
+  // Recruiter applicants list: WHERE jobId=? ORDER BY atsScore DESC.
+  @@index([jobId, atsScore])
+  // Recruiter applicants list (date sort): WHERE jobId=? ORDER BY appliedAt DESC.
+  @@index([jobId, appliedAt])
+  // Filter by status within a job.
+  @@index([jobId, status])
+  // Candidate "my applications": WHERE candidateId=? ORDER BY appliedAt DESC.
+  @@index([candidateId, appliedAt])
+}
