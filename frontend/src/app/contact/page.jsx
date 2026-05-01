@@ -18,7 +18,7 @@ export default function ContactPage() {
       setStatus({ kind: 'error', msg: 'Please fill out all fields.' });
       return;
     }
-    setStatus({ kind: 'ok', msg: "Thanks — we'll be in touch within one business day." });
+    setStatus({ kind: 'ok', msg: "Thanks, I'll be in touch within one business day." });
     setForm({ name: '', email: '', message: '' });
   }
 
@@ -31,7 +31,7 @@ export default function ContactPage() {
             Talk to a human
           </h1>
           <p className="muted mx-auto mt-4 max-w-xl">
-            Have a question, an integration request, or feedback on the product? Drop us a line.
+            Have a question, an integration request, or feedback on the product? Drop me a line.
           </p>
         </div>
       </FadeIn>
@@ -39,19 +39,20 @@ export default function ContactPage() {
       <div className="mx-auto mt-12 grid max-w-5xl gap-6 lg:grid-cols-5">
         <FadeIn className="lg:col-span-2" delay={0.05}>
           <div className="card h-full p-6">
-            <h3 className="text-lg font-semibold">Reach us directly</h3>
+            <h3 className="text-lg font-semibold">Reach out to me</h3>
+            <p className="muted mt-1 text-sm">Ravi Teja D</p>
             <ul className="mt-4 space-y-3 text-sm">
               <li className="flex items-center gap-3">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 text-white"><Mail size={16} /></span>
-                hello@northwind.example
+                <a href="mailto:ravitejachoudary6@gmail.com" className="hover:underline">ravitejachoudary6@gmail.com</a>
               </li>
               <li className="flex items-center gap-3">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 text-white"><Phone size={16} /></span>
-                +1 (555) 010-2030
+                <a href="tel:+917993498259" className="hover:underline">+91 79934 98259</a>
               </li>
               <li className="flex items-center gap-3">
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 text-white"><MapPin size={16} /></span>
-                Remote · HQ in San Francisco
+                Remote · India
               </li>
             </ul>
           </div>

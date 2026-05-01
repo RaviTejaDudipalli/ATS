@@ -55,7 +55,7 @@ function getCsrfToken() {
   return csrfCache;
 }
 
-/** Force a re-read on the next request — call after auth state changes. */
+/** Force a re-read on the next request. Call after auth state changes. */
 function invalidateCsrfCache() {
   csrfCache = null;
 }
@@ -174,7 +174,7 @@ async function rawFetch(path, { method = 'GET', body, formData, headers = {}, _r
   const res = await fetch(`${BASE}${path}`, init);
 
   // Transparent one-shot refresh on 401. Skip for auth endpoints themselves
-  // — recursing through /refresh on a 401 from /refresh is just noise.
+  // recursing through /refresh on a 401 from /refresh is just noise.
   const isAuthEndpoint =
     path.startsWith('/api/auth/login') ||
     path.startsWith('/api/auth/signup') ||
@@ -204,7 +204,7 @@ export const api = {
 
 /**
  * Authenticated download. Cookies ride along for free, so we don't have to
- * pre-fetch with a bearer token any more — but we still need fetch-then-blob
+ * pre-fetch with a bearer token any more, but we still need fetch-then-blob
  * because the browser won't pass our same-site auth cookies on a plain `<a>`
  * click that opens a new tab to a different origin.
  */

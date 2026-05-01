@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 /**
- * Simple, accessible page-number control. We don't show every page —
+ * Simple, accessible page-number control. We don't show every page,
  * just prev / "Page X of Y" / next, which scales fine to thousands of pages
  * without DOM bloat and is screen-reader friendly.
  */

@@ -47,7 +47,7 @@ export default function JobDetailPage() {
     setApplyResult(null);
     try {
       await api.post('/api/applications', { jobId: id, coverLetter });
-      const msg = "We'll score your resume against the role in the background — check your dashboard.";
+      const msg = "We'll score your resume against the role in the background. Check your dashboard.";
       setApplyResult({ kind: 'ok', msg: 'Application submitted. ' + msg });
       toast.success('Application submitted', msg);
       setCoverLetter('');

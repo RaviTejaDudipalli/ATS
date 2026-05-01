@@ -10,9 +10,9 @@ const values = [
   },
   {
     icon: Globe,
-    title: 'Built remote',
+    title: 'Built by Ravi',
     description:
-      'We are a distributed team across five timezones. Async-friendly is not a perk — it is the default.',
+      "Designed, developed, maintained, and optimized end-to-end by Ravi Teja D, with a game-changing, industry-leading ATS scoring algorithm that filters out the best possible candidates for every job opening.",
   },
   {
     icon: Rocket,
@@ -39,8 +39,8 @@ export default function AboutPage() {
               We are building the most candidate-friendly ATS on the market.
             </h1>
             <p className="muted mx-auto mt-5 max-w-2xl text-lg">
-              Northwind started as a side project after one too many "thank you for applying" form
-              letters. Today we power hiring for fast-growing teams that want to do better.
+              Ravi Demo ATS started as a personal project after one too many "thank you for applying" form
+              letters. Today it powers hiring for fast-growing teams that want to do better.
             </p>
           </div>
         </FadeIn>
@@ -66,7 +66,7 @@ export default function AboutPage() {
         <FadeIn>
           <div className="card grid gap-8 p-10 sm:grid-cols-3">
             {[
-              { k: '2,400+', d: 'roles posted on Northwind' },
+              { k: '2,400+', d: 'roles posted on Ravi Demo ATS' },
               { k: '60+', d: 'companies hiring with us' },
               { k: '92%', d: 'of candidates feel respected by the process' },
             ].map((s) => (

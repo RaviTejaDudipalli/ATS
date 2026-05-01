@@ -95,7 +95,7 @@ export default function JobsExplorer() {
       {!loading && empty && (
         <EmptyState
           title="No matching roles yet"
-          description="Try a different keyword, or check back soon — new roles get posted weekly."
+          description="Try a different keyword, or check back soon. New roles get posted weekly."
         />
       )}
 

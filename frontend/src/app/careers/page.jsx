@@ -12,7 +12,7 @@ export default function CareersPage() {
           <div className="mx-auto max-w-3xl text-center">
             <span className="badge">Careers</span>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-              Open roles at Northwind
+              Open roles at Ravi Demo ATS
             </h1>
             <p className="muted mx-auto mt-5 max-w-2xl text-lg">
               Join a small team building the hiring tools we wish we had had ourselves.

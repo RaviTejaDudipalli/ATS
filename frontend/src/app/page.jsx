@@ -13,7 +13,7 @@ const features = [
     icon: FileSearch,
     title: 'Resume parsing',
     description:
-      'PDF, DOCX, and plain-text resumes are parsed automatically — no copy-paste required.',
+      'PDF, DOCX, and plain-text resumes are parsed automatically, no copy-paste required.',
   },
   {
     icon: Users,
@@ -31,7 +31,7 @@ const features = [
     icon: Zap,
     title: 'Smart filters',
     description:
-      'Sort applicants by ATS score, recency, or keyword fit — find your shortlist in seconds.',
+      'Sort applicants by ATS score, recency, or keyword fit, and find your shortlist in seconds.',
   },
   {
     icon: Sparkles,
@@ -69,15 +69,15 @@ export default function HomePage() {
 
           <FadeIn delay={0.1}>
             <p className="muted mx-auto mt-6 max-w-2xl text-center text-lg">
-              Northwind ATS gives every applicant a fair score, and every recruiter a real
-              shortlist — without the spreadsheet sprawl.
+              Ravi Demo ATS gives every applicant a fair score, and every recruiter a real
+              shortlist, without the spreadsheet sprawl.
             </p>
           </FadeIn>
 
           <FadeIn delay={0.15}>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <Link href="/signup" className="btn-primary">
-                Get started — it's free <ArrowRight size={16} />
+                Get started, it's free <ArrowRight size={16} />
               </Link>
               <Link href="/careers" className="btn-ghost">Browse roles</Link>
             </div>
@@ -145,7 +145,7 @@ export default function HomePage() {
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Link href="/signup" className="btn-primary">Create your account</Link>
-                <Link href="/contact" className="btn-ghost">Talk to us</Link>
+                <Link href="/contact" className="btn-ghost">Talk to me</Link>
               </div>
             </div>
           </div>

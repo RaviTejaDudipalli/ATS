@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
       const data = await api.get('/api/auth/me');
       setUser(data.user);
     } catch {
-      // Either no session or one that won't refresh — treat as logged out.
+      // Either no session or one that won't refresh; treat as logged out.
       setUser(null);
     } finally {
       setLoading(false);

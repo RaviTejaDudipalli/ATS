@@ -56,7 +56,7 @@ function SignupInner() {
       <FadeIn>
         <div className="card w-full max-w-lg p-8">
           <h1 className="text-2xl font-semibold tracking-tight">Create your account</h1>
-          <p className="muted mt-1 text-sm">Choose how you'll use Northwind ATS.</p>
+          <p className="muted mt-1 text-sm">Choose how you'll use Ravi Demo ATS.</p>
 
           <div className="mt-5 grid grid-cols-2 gap-2 rounded-xl border p-1" style={{ borderColor: 'rgb(var(--border))' }}>
             {['CANDIDATE', 'RECRUITER'].map((r) => (

@@ -59,7 +59,7 @@ export function ToastProvider({ children }) {
     <ToastContext.Provider value={value}>
       {children}
       <div
-        // Live region — screen readers announce new toasts as they appear.
+        // Live region: screen readers announce new toasts as they appear.
         role="region"
         aria-label="Notifications"
         className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-full max-w-sm flex-col gap-2"

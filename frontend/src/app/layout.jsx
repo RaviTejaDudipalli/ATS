@@ -10,7 +10,7 @@ import Footer from '@/components/footer';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata = {
-  title: 'Northwind ATS — Hire smarter',
+  title: 'Ravi Demo ATS · Hire smarter',
   description:
     'A clean, modern applicant tracking system with built-in resume scoring.',
 };

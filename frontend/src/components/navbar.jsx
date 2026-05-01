@@ -64,9 +64,9 @@ export default function Navbar() {
       <div className="container-page flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 text-white shadow-soft">
-            N
+            R
           </span>
-          <span>Northwind ATS</span>
+          <span>Ravi Demo ATS</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

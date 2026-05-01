@@ -107,7 +107,7 @@ function ProfileInner() {
     <section className="container-page py-10">
       <FadeIn>
         <h1 className="text-3xl font-semibold tracking-tight">Profile & resume</h1>
-        <p className="muted mt-1">Keep this fresh — recruiters and our scoring engine both rely on it.</p>
+        <p className="muted mt-1">Keep this fresh, recruiters and the scoring engine both rely on it.</p>
       </FadeIn>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -191,7 +191,7 @@ function ProfileInner() {
               </div>
             </div>
           ) : (
-            <p className="muted text-sm">No resume on file yet — upload one to start applying.</p>
+            <p className="muted text-sm">No resume on file yet. Upload one to start applying.</p>
           )}
 
           <label className="btn-primary w-full cursor-pointer">

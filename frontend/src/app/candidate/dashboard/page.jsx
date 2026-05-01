@@ -94,7 +94,7 @@ function CandidateDashboardInner() {
         {apps && apps.length === 0 && (
           <EmptyState
             title="No applications yet"
-            description="Browse open roles and apply with one click — your score updates instantly."
+            description="Browse open roles and apply with one click. Your score updates instantly."
             action={<Link href="/jobs" className="btn-primary">Browse jobs</Link>}
           />
         )}
@@ -120,7 +120,7 @@ function CandidateDashboardInner() {
                       {a.job.title}
                     </Link>
                     <div className="muted mt-0.5 text-sm">
-                      {a.job.recruiter?.company || '—'} · Applied {formatDate(a.appliedAt)}
+                      {a.job.recruiter?.company || 'Independent'} · Applied {formatDate(a.appliedAt)}
                     </div>
                   </div>
                   <span className={`badge ${statusBadgeClass(a.status)}`}>{statusLabel(a.status)}</span>

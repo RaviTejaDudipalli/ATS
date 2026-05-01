@@ -20,7 +20,7 @@ export default function JobCard({ job }) {
       </div>
       <h3 className="text-lg font-semibold leading-tight">{job.title}</h3>
       <div className="muted mt-1 text-sm">
-        {job.recruiter?.company || 'Northwind Labs'}
+        {job.recruiter?.company || 'Independent'}
       </div>
 
       <div className="muted mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
