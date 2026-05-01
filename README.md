@@ -1,6 +1,6 @@
 # ATS — Applicant Tracking System
 
-A production-ready, full-stack Applicant Tracking System with a modern company website.
+A production-ready, full-stack Applicant Tracking System with a modern company website. Hope the below content is helpful.
 
 - **Frontend** — Next.js 14 (App Router), Tailwind CSS, Framer Motion
 - **Backend** — Node.js, Express, Prisma, PostgreSQL
