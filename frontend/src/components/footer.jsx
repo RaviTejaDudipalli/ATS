@@ -10,7 +10,7 @@ export default function Footer() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 text-white">
               R
             </span>
-            Ravi Demo ATS
+            Hayai
           </Link>
           <p className="muted mt-3 max-w-xs text-sm">
             Hire smarter with built-in resume scoring, intuitive workflows, and a candidate
@@ -47,7 +47,7 @@ export default function Footer() {
       </div>
       <div className="border-t" style={{ borderColor: 'rgb(var(--border))' }}>
         <div className="container-page flex h-14 items-center justify-between text-xs muted">
-          <span>© {new Date().getFullYear()} Ravi Demo ATS. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Hayai. All rights reserved.</span>
           <span>Crafted with care.</span>
         </div>
       </div>

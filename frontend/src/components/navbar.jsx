@@ -66,7 +66,7 @@ export default function Navbar() {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 text-white shadow-soft">
             R
           </span>
-          <span>Ravi Demo ATS</span>
+          <span>Hayai</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

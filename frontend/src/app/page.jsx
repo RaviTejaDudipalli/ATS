@@ -69,7 +69,7 @@ export default function HomePage() {
 
           <FadeIn delay={0.1}>
             <p className="muted mx-auto mt-6 max-w-2xl text-center text-lg">
-              Ravi Demo ATS gives every applicant a fair score, and every recruiter a real
+              Hayai gives every applicant a fair score, and every recruiter a real
               shortlist, without the spreadsheet sprawl.
             </p>
           </FadeIn>
